@@ -192,7 +192,7 @@ class session():
 
                 
 
-    def preprocess(self, hpf=0, lpf=0, rmv_avg=False, inplace=True):
+    def preprocess(self, hpf=0, lpf=0, rmv_avg=False, inplace=False):
         # Handle preprocessing to create a dataframe of processed data
         # Scale the data from -1 to 1
         # High-pass filter = hpf
@@ -204,14 +204,13 @@ class session():
         self.proc_data_chns = pd.DataFrame()
         self.proc_data_chns['Time'] = self.data_chns['Time']
         
-        self.s_factor = self.data_chns.drop(columns=self.data_chns.keys()[17:]).drop(columns='Time').max().max() # max val for all chns
+        self.s_factor = S1.data_chns.drop(columns=S1.data_chns.keys()[17:]).drop(columns='Time').max().max() # max val for all chns
         for i in range(self.n_chns):
             self.proc_data_chns['eeg_channel_'+str(i+1)] = self.data_chns['eeg_channel_'+str(i+1)].div(self.s_factor)
 
         if rmv_avg:
             for i in range(self.n_chns):
                 self.proc_data_chns['eeg_channel_'+str(i+1)] = self.proc_data_chns['eeg_channel_'+str(i+1)] - np.mean(self.proc_data_chns['eeg_channel_'+str(i+1)])
-#                 print(np.mean(self.data_chns['eeg_channel_'+str(i+1)]))
 
         
         if lpf > 0 and hpf > 0:
